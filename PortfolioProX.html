@@ -10,7 +10,6 @@
 
     <style>
         :root {
-            /* LIGHT MODE (Clean White/Slate) */
             --primary: #6366f1;
             --bg-body: #f8fafc;
             --bg-sidebar: #ffffff;
@@ -22,14 +21,13 @@
         }
 
         body.dark {
-            /* PURE BLACK & GREY THEME */
-            --primary: #818cf8; /* Slightly lighter indigo for better contrast on black */
-            --bg-body: #000000; /* Pure Black */
-            --bg-sidebar: #0a0a0a; /* Very Dark Grey */
-            --bg-card: #111111; /* Dark Grey Card */
-            --text-main: #f4f4f5; /* Off-white */
-            --text-muted: #a1a1aa; /* Medium Grey */
-            --border: #27272a; /* Zinc Grey Border */
+            --primary: #818cf8; 
+            --bg-body: #000000; 
+            --bg-sidebar: #0a0a0a; 
+            --bg-card: #111111; 
+            --text-main: #f4f4f5; 
+            --text-muted: #a1a1aa; 
+            --border: #27272a; 
             --nav-bg: rgba(0, 0, 0, 0.9);
         }
 
@@ -43,7 +41,6 @@
             overflow-x: hidden;
         }
 
-        /* NAVIGATION */
         nav {
             display: flex;
             justify-content: space-between;
@@ -63,14 +60,12 @@
         nav a { text-decoration: none; color: var(--text-main); font-size: 0.9rem; font-weight: 500; }
         nav a:hover { color: var(--primary); }
 
-        /* LAYOUT */
         .app-container {
             display: grid;
             grid-template-columns: 380px 1fr;
             min-height: calc(100vh - 70px);
         }
 
-        /* SIDEBAR BUILDER */
         .builder-panel {
             background: var(--bg-sidebar);
             border-right: 1px solid var(--border);
@@ -115,7 +110,6 @@
         button:hover { border-color: var(--primary); }
         button.primary-btn { background: var(--primary); color: white; border: none; }
 
-        /* PREVIEW AREA */
         .preview-area { scroll-behavior: smooth; }
         
         header { 
@@ -162,7 +156,8 @@
         }
     </style>
 </head>
-<body class="dark"> <nav>
+<body class="dark"> 
+    <nav>
         <h2 id="navLogo">PortfolioPro.</h2>
         <ul>
             <li><a href="#home">Home</a></li>
@@ -258,13 +253,11 @@
     </div>
 
     <script>
-        // Update Text Elements
         function updateText(id, value, fallback) {
             document.getElementById(id).innerText = value || fallback;
             if(id === 'portfolioName') document.getElementById('footerName').innerText = value || "PortfolioPro";
         }
 
-        // Skill Badge Generator
         function updateSkills(value) {
             const container = document.getElementById('skillsContainer');
             container.innerHTML = '';
@@ -280,7 +273,6 @@
             });
         }
 
-        // Theme Controls
         function setTheme(theme) {
             document.body.className = theme;
         }
