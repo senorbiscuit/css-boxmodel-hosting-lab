@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PortfolioPro | OLED Dark Edition</title>
+
+    <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+
+    <style>
+        :root {
+            /* LIGHT MODE (Clean White/Slate) */
+            --primary: #6366f1;
+            --bg-body: #f8fafc;
+            --bg-sidebar: #ffffff;
+            --bg-card: #ffffff;
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+            --border: #e2e8f0;
+            --nav-bg: rgba(255, 255, 255, 0.8);
+        }
+
+        body.dark {
+            /* PURE BLACK & GREY THEME */
+            --primary: #818cf8; /* Slightly lighter indigo for better contrast on black */
+            --bg-body: #000000; /* Pure Black */
+            --bg-sidebar: #0a0a0a; /* Very Dark Grey */
+            --bg-card: #111111; /* Dark Grey Card */
+            --text-main: #f4f4f5; /* Off-white */
+            --text-muted: #a1a1aa; /* Medium Grey */
+            --border: #27272a; /* Zinc Grey Border */
+            --nav-bg: rgba(0, 0, 0, 0.9);
+        }
+
+        * { box-sizing: border-box; transition: background 0.3s, border-color 0.3s, color 0.3s; }
+        
+        body {
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            margin: 0;
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            overflow-x: hidden;
+        }
+
+        /* NAVIGATION */
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 5%;
+            height: 70px;
+            background: var(--nav-bg);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--border);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        nav h2 { font-size: 1.2rem; font-weight: 800; color: var(--primary); margin: 0; letter-spacing: -0.5px; }
+        nav ul { display: flex; list-style: none; gap: 25px; margin: 0; }
+        nav a { text-decoration: none; color: var(--text-main); font-size: 0.9rem; font-weight: 500; }
+        nav a:hover { color: var(--primary); }
+
+        /* LAYOUT */
+        .app-container {
+            display: grid;
+            grid-template-columns: 380px 1fr;
+            min-height: calc(100vh - 70px);
+        }
+
+        /* SIDEBAR BUILDER */
+        .builder-panel {
+            background: var(--bg-sidebar);
+            border-right: 1px solid var(--border);
+            padding: 30px;
+            height: calc(100vh - 70px);
+            position: sticky;
+            top: 70px;
+            overflow-y: auto;
+        }
+
+        .builder-panel h3 { 
+            font-size: 0.75rem; 
+            text-transform: uppercase; 
+            letter-spacing: 1.5px; 
+            color: var(--text-muted); 
+            margin: 25px 0 15px 0;
+            padding-bottom: 8px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .control-group { margin-bottom: 20px; }
+        .control-group label { display: block; font-size: 0.7rem; font-weight: 700; margin-bottom: 8px; color: var(--text-muted); }
+        
+        input, textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            background: var(--bg-body);
+            color: var(--text-main);
+            outline: none;
+            font-size: 0.9rem;
+        }
+
+        input:focus { border-color: var(--primary); }
+
+        .btn-row { display: flex; gap: 10px; }
+        button {
+            flex: 1; padding: 12px; border-radius: 8px; border: 1px solid var(--border);
+            background: var(--bg-card); color: var(--text-main); cursor: pointer; font-weight: 600;
+        }
+        button:hover { border-color: var(--primary); }
+        button.primary-btn { background: var(--primary); color: white; border: none; }
+
+        /* PREVIEW AREA */
+        .preview-area { scroll-behavior: smooth; }
+        
+        header { 
+            padding: 120px 10% 80px; 
+            text-align: center;
+            background: radial-gradient(circle at center, rgba(129, 140, 248, 0.08) 0%, transparent 70%);
+        }
+        header h1 { font-size: 3.5rem; margin: 0; font-weight: 800; letter-spacing: -1.5px; }
+        header p { font-size: 1.25rem; color: var(--text-muted); margin-top: 15px; }
+        
+        section { padding: 80px 10%; border-top: 1px solid var(--border); }
+        section h2 { font-size: 1.75rem; font-weight: 700; margin-bottom: 30px; }
+
+        .skill-badge {
+            display: inline-block;
+            background: var(--border);
+            color: var(--text-main);
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            margin: 4px;
+            border: 1px solid transparent;
+        }
+        .skill-badge:hover { border-color: var(--primary); color: var(--primary); }
+
+        .project-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 24px;
+        }
+
+        .project-card {
+            background: var(--bg-card);
+            padding: 30px;
+            border-radius: 16px;
+            border: 1px solid var(--border);
+        }
+        .project-card h3 { margin-top: 0; color: var(--primary); }
+        .project-card p { color: var(--text-muted); line-height: 1.6; }
+
+        @media (max-width: 900px) {
+            .app-container { grid-template-columns: 1fr; }
+            .builder-panel { height: auto; position: static; }
+        }
+    </style>
+</head>
+<body class="dark"> <nav>
+        <h2 id="navLogo">PortfolioPro.</h2>
+        <ul>
+            <li><a href="#home">Home</a></li>
+            <li><a href="#about">About</a></li>
+            <li><a href="#projects">Projects</a></li>
+        </ul>
+    </nav>
+
+    <div class="app-container">
+        <aside class="builder-panel">
+            <h3>Identity</h3>
+            <div class="control-group">
+                <label>FULL NAME</label>
+                <input type="text" id="nameInput" placeholder="Enter Name" oninput="updateText('portfolioName', this.value, 'Your Name')">
+            </div>
+            <div class="control-group">
+                <label>TAGLINE</label>
+                <input type="text" id="taglineInput" placeholder="Developer | Student" oninput="updateText('tagline', this.value, 'Web Developer | Student')">
+            </div>
+
+            <h3>About Me</h3>
+            <div class="control-group">
+                <label>BIO</label>
+                <textarea id="aboutInput" rows="4" placeholder="Brief introduction..." oninput="updateText('aboutText', this.value, 'Write your story here...')"></textarea>
+            </div>
+            <div class="control-group">
+                <label>SKILLS (Comma separated)</label>
+                <input type="text" placeholder="e.g. Java, Python, HTML" oninput="updateSkills(this.value)">
+            </div>
+
+            <h3>Projects</h3>
+            <div class="control-group">
+                <label>PROJECT 1 TITLE</label>
+                <input type="text" oninput="updateText('p1-title', this.value, 'Project Alpha')">
+                <label style="margin-top:8px">DESCRIPTION</label>
+                <input type="text" oninput="updateText('p1-desc', this.value, 'Describe the tech stack and goal.')">
+            </div>
+            
+            <div class="control-group">
+                <label>PROJECT 2 TITLE</label>
+                <input type="text" oninput="updateText('p2-title', this.value, 'Project Beta')">
+                <label style="margin-top:8px">DESCRIPTION</label>
+                <input type="text" oninput="updateText('p2-desc', this.value, 'Describe the tech stack and goal.')">
+            </div>
+
+            <h3>Settings</h3>
+            <div class="control-group">
+                <label>THEME MODE</label>
+                <div class="btn-row">
+                    <button onclick="setTheme('light')">Light</button>
+                    <button onclick="setTheme('dark')">Pure Dark</button>
+                </div>
+            </div>
+            <div class="control-group">
+                <label>ACCENT COLOR</label>
+                <input type="color" id="accentColor" value="#818cf8" onchange="applyAccent(this.value)">
+            </div>
+        </aside>
+
+        <main class="preview-area">
+            <header id="home">
+                <h1 id="portfolioName">Your Name</h1>
+                <p id="tagline">Web Developer | Student</p>
+            </header>
+
+            <section id="about">
+                <h2>About Me</h2>
+                <p id="aboutText" style="line-height: 1.8; font-size: 1.1rem; max-width: 750px; color: var(--text-main);">
+                    Start typing in the "Bio" section of the customizer to update this text live.
+                </p>
+                <div id="skillsContainer" style="margin-top: 30px;">
+                    </div>
+            </section>
+
+            <section id="projects">
+                <h2>Featured Projects</h2>
+                <div class="project-grid">
+                    <div class="project-card">
+                        <h3 id="p1-title">Project 1</h3>
+                        <p id="p1-desc">A showcase of your technical expertise and problem-solving skills.</p>
+                    </div>
+                    <div class="project-card">
+                        <h3 id="p2-title">Project 2</h3>
+                        <p id="p2-desc">Another impressive application demonstrating your growth as a developer.</p>
+                    </div>
+                </div>
+            </section>
+
+            <footer style="text-align: center; padding: 60px 40px; color: var(--text-muted); border-top: 1px solid var(--border);">
+                <p>© 2026 <span id="footerName">PortfolioPro</span>.</p>
+            </footer>
+        </main>
+    </div>
+
+    <script>
+        // Update Text Elements
+        function updateText(id, value, fallback) {
+            document.getElementById(id).innerText = value || fallback;
+            if(id === 'portfolioName') document.getElementById('footerName').innerText = value || "PortfolioPro";
+        }
+
+        // Skill Badge Generator
+        function updateSkills(value) {
+            const container = document.getElementById('skillsContainer');
+            container.innerHTML = '';
+            if (!value) return;
+            
+            value.split(',').forEach(skill => {
+                if (skill.trim()) {
+                    const span = document.createElement('span');
+                    span.className = 'skill-badge';
+                    span.innerText = skill.trim();
+                    container.appendChild(span);
+                }
+            });
+        }
+
+        // Theme Controls
+        function setTheme(theme) {
+            document.body.className = theme;
+        }
+
+        function applyAccent(color) {
+            document.documentElement.style.setProperty('--primary', color);
+        }
+    </script>
+</body>
+</html>
